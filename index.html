@@ -35,7 +35,7 @@ tr:nth-child(even) td{background:color-mix(in srgb,var(--bg) 60%,transparent)}
 .none{color:var(--muted);font-style:italic}
 .pill{display:inline-block;border-radius:6px;padding:1px 10px;font-size:12.5px;font-weight:500;white-space:nowrap}
 .Released{background:var(--ok-bg);color:var(--ok)}.Unreleased{background:var(--un-bg);color:var(--un)}.In-progress{background:var(--ip-bg);color:var(--ip)}
-.t{background:#cfe0fb;color:#16346b}.e{background:#ff7b8c;color:#5a0010}.b{background:#ffb3cf;color:#5a0030}
+.t{background:#cfe0fb;color:#16346b}.e{background:#ff7b8c;color:#5a0010}.b{background:#ffb3cf;color:#5a0030}.l{background:#d3efb0;color:#2c4a0a}
 .empty{padding:28px;text-align:center;color:var(--muted)}
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--text);color:var(--bg);padding:8px 16px;border-radius:8px;opacity:0;transition:opacity .2s;pointer-events:none}
 .toast.on{opacity:1}
@@ -49,7 +49,7 @@ tr:nth-child(even) td{background:color-mix(in srgb,var(--bg) 60%,transparent)}
 <div class="stats" id="stats"></div>
 <div class="bar">
 <input id="q" type="search" placeholder="Cari nama atau KUID, contoh: 9900801 atau Orange Ring" aria-label="Cari">
-<select id="type" aria-label="Filter tipe"><option value="">Semua tipe</option><option>Textures</option><option>Essentials</option><option>Bogie</option></select>
+<select id="type" aria-label="Filter tipe"><option value="">Semua tipe</option><option>Textures</option><option>Essentials</option><option>Bogie</option><option>License</option></select>
 </div>
 <div class="tw"><table>
 <thead><tr><th>Oldest KUID</th><th>Latest KUID</th><th>Nama</th><th>Tipe</th><th>Status</th><th>Post date</th><th>Notes</th></tr></thead>
@@ -66,8 +66,8 @@ const P="kuid:1054400:",D=[
 [P+"980004",P+"980004","[TSC][T] Textures - Luxury Sleeper Plate Number - 2026","Textures","Released","2/19/2026","Released"],
 [P+"980005",P+"980005","[TSC][T] Textures - Plate Name - 2026","Textures","Released","3/18/2026","Released"],
 [P+"980006",P+"980006","[TSC][T] Textures - Plate Number - 2026","Textures","Released","2/19/2026","Released"],
-[P+"980007",P+"980007","[TSC][T] Textures - Black Arial Number","Textures","Released","2/19/2026","Released"],
-[P+"980008",P+"980008","[TSC][T] Textures - Train Depo","Textures","Released","2/19/2026","Released"],
+[P+"980007",P+"980007","[TSC][T] Textures - Black Arial Number","Textures","Released","11/22/2026","Released Updated"],
+[P+"980008",P+"980008","[TSC][T] Textures - Train Depo","Textures","Released","11/22/2026","Released Updated"],
 ["",P+"980009","[TSC][T] Textures - Priority Number - 2026","Textures","Released","2/19/2026","Released"],
 ["",P+"980010","[TSC][T] Textures - Imperial Number - 2026","Textures","Released","2/19/2026","Released"],
 ["",P+"980011","[TSC][T] Textures - Compartment Number - 2026","Textures","Released","2/19/2026","Released"],
@@ -87,13 +87,14 @@ const P="kuid:1054400:",D=[
 ["",P+"9900105","[TSC][B] Bogie - TB-1014 (K10) - *** Ring - PBR","Bogie","Unreleased","1/24/2026","Kuid Changed"],
 ["",P+"9900106","[TSC][B] Bogie - TB-1014 (K10) - *** Ring - Non PBR","Bogie","Unreleased","1/24/2026","Kuid Changed"],
 ["",P+"9900901","[TSC][B] Bogie - K9 Black - PBR","Bogie","Released","2/19/2026","Released"],
-["",P+"9900902","[TSC][B] Bogie - K9 Black - Non PBR","Bogie","In progress","1/25/2026","Kuid Changed"]
+["",P+"9900902","[TSC][B] Bogie - K9 Black - Non PBR","Bogie","In progress","1/25/2026","Kuid Changed"],
+["",P+"2710099","[TSC][L] Core Acces Key - User License","License","Released","1/10/2025","Released"]
 ];
 let status="";
 const $=id=>document.getElementById(id);
 const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const kuid=k=>k?`<button class="k" data-k="${esc(k)}" title="Salin">&lt;${esc(k)}&gt;</button>`:'<span class="none">—</span>';
-const tcls={Textures:"t",Essentials:"e",Bogie:"b"};
+const tcls={Textures:"t",Essentials:"e",Bogie:"b",License:"l"};
 function stats(){
  const c=s=>D.filter(r=>r[4]===s).length;
  const items=[["","Semua",D.length],["Released","Released",c("Released")],["In progress","In progress",c("In progress")],["Unreleased","Unreleased",c("Unreleased")]];
