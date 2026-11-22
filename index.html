@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Dependencies 2026 Tracker</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap">
+<style>
+:root{--bg:#f3f6f7;--surface:#fff;--text:#1d2a30;--muted:#667a83;--line:#dbe4e7;--head:#5f95a5;--headtext:#fff;
+--ok-bg:#b6e6b0;--ok:#1f5a1b;--un-bg:#ff8a6b;--un:#5a1500;--ip-bg:#fff3a0;--ip:#5a4a00;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121a1d;--surface:#1a2428;--text:#e6eef0;--muted:#8fa4ac;--line:#2a373c;--head:#35606e;--ok-bg:#24502a;--ok:#c9f2c4;--un-bg:#7a2c18;--un:#ffd9cc;--ip-bg:#665c1a;--ip:#fff3a0}}
+:root[data-theme="dark"]{--bg:#121a1d;--surface:#1a2428;--text:#e6eef0;--muted:#8fa4ac;--line:#2a373c;--head:#35606e;--ok-bg:#24502a;--ok:#c9f2c4;--un-bg:#7a2c18;--un:#ffd9cc;--ip-bg:#665c1a;--ip:#fff3a0}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 Poppins,system-ui,sans-serif}
+.wrap{max-width:1100px;margin:0 auto;padding:20px 16px 40px}
+h1{font-size:22px;font-weight:600;margin:0 0 2px}
+.sub{color:var(--muted);margin:0 0 16px}
+.stats{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.stat{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:8px 14px;cursor:pointer;font:inherit;color:inherit;text-align:left}
+.stat b{display:block;font-size:20px;font-weight:600;line-height:1.2}
+.stat span{color:var(--muted);font-size:12px}
+.stat[aria-pressed="true"]{outline:2px solid var(--head)}
+.bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+input,select{font:inherit;color:var(--text);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:9px 12px}
+input{flex:1;min-width:220px}
+:focus-visible{outline:2px solid var(--head);outline-offset:2px}
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:860px}
+th{background:var(--head);color:var(--headtext);text-align:left;font-weight:600;padding:9px 12px;white-space:nowrap}
+td{padding:8px 12px;border-top:1px solid var(--line);vertical-align:middle}
+tr:nth-child(even) td{background:color-mix(in srgb,var(--bg) 60%,transparent)}
+.k{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;cursor:pointer;background:none;border:0;color:inherit;padding:0;text-align:left}
+.k:hover{text-decoration:underline}
+.none{color:var(--muted);font-style:italic}
+.pill{display:inline-block;border-radius:6px;padding:1px 10px;font-size:12.5px;font-weight:500;white-space:nowrap}
+.Released{background:var(--ok-bg);color:var(--ok)}.Unreleased{background:var(--un-bg);color:var(--un)}.In-progress{background:var(--ip-bg);color:var(--ip)}
+.t{background:#cfe0fb;color:#16346b}.e{background:#ff7b8c;color:#5a0010}.b{background:#ffb3cf;color:#5a0030}
+.empty{padding:28px;text-align:center;color:var(--muted)}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--text);color:var(--bg);padding:8px 16px;border-radius:8px;opacity:0;transition:opacity .2s;pointer-events:none}
+.toast.on{opacity:1}
+.hint{color:var(--muted);font-size:12px;margin-top:10px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Dependencies 2026</h1>
+<p class="sub">Cek status dependency: cari berdasarkan nama atau KUID (lama maupun terbaru).</p>
+<div class="stats" id="stats"></div>
+<div class="bar">
+<input id="q" type="search" placeholder="Cari nama atau KUID, contoh: 9900801 atau Orange Ring" aria-label="Cari">
+<select id="type" aria-label="Filter tipe"><option value="">Semua tipe</option><option>Textures</option><option>Essentials</option><option>Bogie</option></select>
+</div>
+<div class="tw"><table>
+<thead><tr><th>Oldest KUID</th><th>Latest KUID</th><th>Nama</th><th>Tipe</th><th>Status</th><th>Post date</th><th>Notes</th></tr></thead>
+<tbody id="rows"></tbody></table><div class="empty" id="empty" hidden>Tidak ada hasil. Coba kata kunci lain atau reset filter.</div></div>
+<p class="hint">Klik KUID untuk menyalin. Owner semua item: TSC Production.</p>
+</div>
+<div class="toast" id="toast">Tersalin</div>
+<script>
+// [oldest, latest, name, type, status, date, notes]
+const P="kuid:1054400:",D=[
+["",P+"980001","[TSC][T] Textures - PIDS Running Text - 2026","Textures","Released","2/19/2026","Released"],
+[P+"980002",P+"980002","[TSC][T] Textures - PIDS Number Text - 2026","Textures","Released","2/19/2026","Released"],
+[P+"980003",P+"980003","[TSC][T] Textures - Luxury Sleeper Plate Name - 2026","Textures","Released","2/19/2026","Released"],
+[P+"980004",P+"980004","[TSC][T] Textures - Luxury Sleeper Plate Number - 2026","Textures","Released","2/19/2026","Released"],
+[P+"980005",P+"980005","[TSC][T] Textures - Plate Name - 2026","Textures","Released","3/18/2026","Released"],
+[P+"980006",P+"980006","[TSC][T] Textures - Plate Number - 2026","Textures","Released","2/19/2026","Released"],
+[P+"980007",P+"980007","[TSC][T] Textures - Black Arial Number","Textures","Released","2/19/2026","Released"],
+[P+"980008",P+"980008","[TSC][T] Textures - Train Depo","Textures","Released","2/19/2026","Released"],
+["",P+"980009","[TSC][T] Textures - Priority Number - 2026","Textures","Released","2/19/2026","Released"],
+["",P+"980010","[TSC][T] Textures - Imperial Number - 2026","Textures","Released","2/19/2026","Released"],
+["",P+"980011","[TSC][T] Textures - Compartment Number - 2026","Textures","Released","2/19/2026","Released"],
+[P+"10232499",P+"980012","[TSC][T] Textures - PIDS Running Text SS NG - 2026","Textures","Released","3/19/2026","Released"],
+[P+"550023",P+"970001","[TSC][E] Default Wagon","Essentials","Released","2/19/2026","Released"],
+[P+"27101727",P+"970002","[TSC][E] Invisible Interior","Essentials","Released","4/6/2026","Released"],
+["kuid:171027:27101730",P+"970003","[TSC][E] TV Animation Texture","Essentials","Released","4/6/2026","Released"],
+[P+"1218902",P+"9900099","[TSC][E] Bogie - Tracksound","Bogie","Released","2/19/2026","Released"],
+[P+"990001",P+"9900501","[TSC][B] Bogie - TB-398 (K5) - PBR","Bogie","Released","2/19/2026","Released"],
+[P+"4430071",P+"9900502","[TSC][B] Bogie - TB-398 (K5) - Non PBR","Bogie","Released","2/19/2026","Released"],
+["",P+"9900801","[TSC][B] Bogie - NT-60 (K8) - PBR","Bogie","Unreleased","1/24/2026","Kuid Changed"],
+[P+"4430072",P+"9900802","[TSC][B] Bogie - NT-60 (K8) - Non PBR","Bogie","Released","2/19/2026","Released"],
+[P+"990003",P+"9900101","[TSC][B] Bogie - TB-1014 (K10) - Orange Ring - PBR","Bogie","Released","2/19/2026","Released"],
+[P+"990011",P+"9900102","[TSC][B] Bogie - TB-1014 (K10) - Orange Ring - Non PBR","Bogie","Released","2/19/2026","Released"],
+[P+"990002",P+"9900103","[TSC][B] Bogie - TB-1014 (K10) - Blue Ring - PBR","Bogie","Released","2/19/2026","Released"],
+["",P+"9900104","[TSC][B] Bogie - TB-1014 (K10) - Blue Ring - Non PBR","Bogie","Released","2/19/2026","Released"],
+["",P+"9900105","[TSC][B] Bogie - TB-1014 (K10) - *** Ring - PBR","Bogie","Unreleased","1/24/2026","Kuid Changed"],
+["",P+"9900106","[TSC][B] Bogie - TB-1014 (K10) - *** Ring - Non PBR","Bogie","Unreleased","1/24/2026","Kuid Changed"],
+["",P+"9900901","[TSC][B] Bogie - K9 Black - PBR","Bogie","Released","2/19/2026","Released"],
+["",P+"9900902","[TSC][B] Bogie - K9 Black - Non PBR","Bogie","In progress","1/25/2026","Kuid Changed"]
+];
+let status="";
+const $=id=>document.getElementById(id);
+const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const kuid=k=>k?`<button class="k" data-k="${esc(k)}" title="Salin">&lt;${esc(k)}&gt;</button>`:'<span class="none">—</span>';
+const tcls={Textures:"t",Essentials:"e",Bogie:"b"};
+function stats(){
+ const c=s=>D.filter(r=>r[4]===s).length;
+ const items=[["","Semua",D.length],["Released","Released",c("Released")],["In progress","In progress",c("In progress")],["Unreleased","Unreleased",c("Unreleased")]];
+ $("stats").innerHTML=items.map(([v,l,n])=>`<button class="stat" data-s="${v}" aria-pressed="${status===v}"><b>${n}</b><span>${l}</span></button>`).join("");
+}
+function render(){
+ const q=$("q").value.trim().toLowerCase().replace(/[<>]/g,""),t=$("type").value;
+ const f=D.filter(r=>(!status||r[4]===status)&&(!t||r[3]===t)&&(!q||(r[0]+" "+r[1]+" "+r[2]+" "+r[6]).toLowerCase().includes(q)));
+ $("rows").innerHTML=f.map(r=>`<tr><td>${kuid(r[0])}</td><td>${kuid(r[1])}</td><td>${esc(r[2])}</td><td><span class="pill ${tcls[r[3]]}">${r[3]}</span></td><td><span class="pill ${r[4].replace(" ","-")}">${r[4]}</span></td><td>${r[5]}</td><td>${r[6]}</td></tr>`).join("");
+ $("empty").hidden=f.length>0;stats();
+}
+$("q").oninput=render;$("type").onchange=render;
+$("stats").onclick=e=>{const b=e.target.closest("[data-s]");if(b){status=b.dataset.s;render()}};
+$("rows").onclick=e=>{const b=e.target.closest("[data-k]");if(!b)return;
+ const v="<"+b.dataset.k+">";
+ try{navigator.clipboard.writeText(v)}catch(_){}
+ const t=$("toast");t.textContent="Tersalin: "+v;t.classList.add("on");setTimeout(()=>t.classList.remove("on"),1400)};
+render();
+</script>
+</body>
+</html>
